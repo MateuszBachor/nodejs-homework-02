@@ -8,7 +8,8 @@ const listContacts = async () => {
     const contacts = await fs.readFile(contactsPath);
     return JSON.parse(contacts);
   } catch (error) {
-    console.error("Load error", error.message);
+    console.error( error.message);
+
   }
 };
 
@@ -18,7 +19,8 @@ const getContactById = async (contactId) => {
     const jsonContacts = await JSON.parse(contacts);
     return jsonContacts.filter((contact) => contact.id === contactId.toString());
   } catch (error) {
-    console.error("Get contact error", error.message);
+        console.error( error.message);
+
   }
 };
 
