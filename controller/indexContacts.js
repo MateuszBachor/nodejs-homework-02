@@ -1,6 +1,6 @@
-const service = require('./../models/contacts')
+const service = require('../models/contacts')
 
-const get = async (req, res, next) => {
+const getContacts = async (req, res, next) => {
   try {
     const results = await service.getAllContacts()
     res.json({
@@ -16,7 +16,7 @@ const get = async (req, res, next) => {
   }
 }
 
-const getById = async (req, res, next) => {
+const getContactById = async (req, res, next) => {
   const { id } = req.params
   try {
     const result = await service.getContactById(id)
@@ -40,7 +40,7 @@ const getById = async (req, res, next) => {
   }
 }
 
-const create = async (req, res, next) => {
+const createContact = async (req, res, next) => {
     const { name, email, phone, favorite } = req.body
     if (req.body.favorite) {
         req.body.favorite=true
@@ -59,7 +59,7 @@ const create = async (req, res, next) => {
   }
 }
 
-const update = async (req, res, next) => {
+const updateContact = async (req, res, next) => {
   const { id } = req.params
   const { name, email, phone } = req.body
   try {
@@ -84,7 +84,7 @@ const update = async (req, res, next) => {
   }
 }
 
-const updateStatus = async (req, res, next) => {
+const updateContactStatus = async (req, res, next) => {
     const { id } = req.params
     if (!req.body.favorite) {
         res.status(400).json({
@@ -118,7 +118,7 @@ const updateStatus = async (req, res, next) => {
   }
 }
 
-const remove = async (req, res, next) => {
+const removeContact = async (req, res, next) => {
   const { id } = req.params
 
   try {
@@ -145,10 +145,10 @@ const remove = async (req, res, next) => {
 }
 
 module.exports = {
-  get,
-  getById,
-  create,
-  remove,
-  update,
-  updateStatus
+  getContacts,
+  getContactById,
+  createContact,
+  removeContact,
+  updateContact,
+  updateContactStatus
 }
