@@ -21,7 +21,10 @@ const user = new Schema({
   token: {
     type: String,
     default: null,
-  }
+  }, 
+  avatarURL: {
+    type: String
+  },
 })
 
 user.methods.setPassword = function(password) {
@@ -31,6 +34,7 @@ user.methods.setPassword = function(password) {
 user.methods.validPassword = function(password) {
   return bcrypt.compareSync(password, this.password);
 };
+
 const User = mongoose.model("user", user);
 
 module.exports = User;

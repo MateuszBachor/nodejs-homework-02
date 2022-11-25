@@ -2,6 +2,7 @@ const jwt = require('jsonwebtoken')
 const User = require('./../models/shemas/user')
 require('dotenv').config()
 const secret = process.env.SECRET
+const gravatar = require('gravatar');
 
 
 
@@ -36,7 +37,7 @@ const login =  async (req, res, next) => {
 
 const registration = async (req, res, next) => {
   const { email, password } = req.body
-  const user = await User.findOne({ email })
+  const user = await User.findOne({ email }) 
   if (user) {
     return res.status(409).json({
       status: 'error',
@@ -46,7 +47,8 @@ const registration = async (req, res, next) => {
     })
   }
   try {
-    const newUser = new User({  email })
+    const avatar = gravatar.url(email, { s: '200', r: 'pg', d: 'monsterid' })
+    const newUser = new User({  email, avatarURL: avatar })
     newUser.setPassword(password)
     await newUser.save()
     res.status(201).json({
@@ -60,7 +62,6 @@ const registration = async (req, res, next) => {
     next(error)
   }
 }
-
 
 
 module.exports = {
