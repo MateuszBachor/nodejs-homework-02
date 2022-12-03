@@ -117,4 +117,7 @@ Jimp.read ( fileName ,  ( err ,  img )  =>  {
   res.json({ description, message: "success", status: 200 });
 });
 
+
+router.get('/users/verify/:verificationToken', ctrlUser.verificationToken)
+router.post('/users/verify/',ctrlUser.resendingEmail)
 module.exports = router;
