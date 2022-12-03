@@ -94,7 +94,7 @@ const storage = multer.diskStorage({
 });
 
 const upload = multer({
-  storage: storage,
+  storage
 });
 
 router.post('/users/avatars', auth, upload.single('picture'), async (req, res, next) => {

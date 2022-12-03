@@ -16,14 +16,21 @@ const login =  async (req, res, next) => {
 
   if (!user || !user.validPassword(password)) {
     return res.status(400).json({
-      status: 'error',
+      status: 'Bad request',
       code: 400,
-      message: 'Incorrect login or password',
-      data: 'Bad request',
+      data: {
+      message: 'Incorrect login or password'
+      }
     })
   }
   if (!user.verify) {
-  return res.status
+    return res.status(401).json({
+      status: 'Unauthorized',
+      code: 401,
+      data: {
+        message:'Not verified email'
+      }
+  })
 }
   const payload = {
     id: user.id,
@@ -36,7 +43,7 @@ const login =  async (req, res, next) => {
     status: 'success',
     code: 200,
     data: {
-      token,
+      message:token,
     },
   })
 } 
@@ -47,10 +54,11 @@ const registration = async (req, res, next) => {
   const user = await User.findOne({ email }) 
   if (user) {
     return res.status(409).json({
-      status: 'error',
+      status: 'Conflict',
       code: 409,
-      message: 'Email is already in use',
-      data: 'Conflict',
+      data: {
+      message: 'Email is already in use'
+      }
     })
   }
     const msg = {
@@ -65,26 +73,34 @@ const registration = async (req, res, next) => {
     </div>`,
 };
 
-await sgMail
-  .send(msg)
-  .then(() => {
-    console.log('Email sent');
-  })
-  .catch(error => {
-    res.json({message:"error email"})
-  });
+
+
   try {
     const avatar = gravatar.url(email, { s: '200', r: 'pg', d: 'monsterid' })
     const newUser = new User({  email, avatarURL: avatar, verificationToken:newVerificationToken })
     newUser.setPassword(password)
     await newUser.save()
+    await sgMail
+  .send(msg)
+  .then(() => {
     return res.status(201).json({
       status: 'success',
       code: 201,
       data: {
-        message: 'Registration successful',
+        message: 'Registration successful, email sent',
       },
     })
+  })
+  .catch(error => {
+    return res.status(400).json({
+      status: 'Bad request',
+      code: 400,
+      data: {
+        message: "error email"
+      }
+    })
+  });
+   
   } catch (error) {
     next(error)
   }
@@ -92,7 +108,6 @@ await sgMail
 const verificationToken = async (req, res, next) => {
   const {verificationToken} = req.params
   const user = await User.findOne({verificationToken})
-  console.log(user)
 
   if (user) {
       if (user.verify) {
@@ -144,7 +159,7 @@ const resendingEmail = async (req, res, next) => {
       }
     })
   }
-  if (user.verify==true) {
+  if (user.verify) {
     return res.status(400).json({
       status: "Bad request",
       code: 400,
@@ -165,22 +180,26 @@ const resendingEmail = async (req, res, next) => {
     </div>`,
 };
 
-await sgMail
-  .send(msg)
-  .then(() => {
-    console.log('Email sent');
-  })
+  await sgMail
+    .send(msg)
+    .then(() => {
+      res.status(200).json({
+        status: "Ok",
+        code: 200,
+        data: {
+          message: "Verification email sent"
+        }
+      })
+    })
   .catch(error => {
-    res.json({message:"error email"})
+    res.status(400).json({
+      status: 'Bad request',
+      code: 400,
+      data: {
+        message: "error email"
+      }
+   })
   });
-  return res.status(200).json({
-    status:"Ok",
-    code: 200,
-    data: {
-      message:"Verification email sent"
-    }
-    
-})
 } 
 
 module.exports = {
